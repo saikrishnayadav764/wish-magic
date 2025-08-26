@@ -10,11 +10,11 @@ export const BackgroundMusic = () => {
   const [showOverlay, setShowOverlay] = useState(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const handleFirstClick = () => {
+  const handleStartSurprise = () => {
     if (audioRef.current) {
       audioRef.current.play().catch((err) => console.error("Play failed:", err));
       setIsPlaying(true);
-      setShowOverlay(false); // hide overlay forever after first click
+      setShowOverlay(false); // Hide overlay after click
     }
   };
 
@@ -31,31 +31,43 @@ export const BackgroundMusic = () => {
 
   return (
     <>
-      {/* Invisible full-screen overlay */}
+      {/* Surprise Birthday Overlay */}
       {showOverlay && (
-        <div
-          onClick={handleFirstClick}
-          className="fixed inset-0 z-[9999] bg-transparent cursor-pointer"
-        />
+        <div className="fixed inset-0 z-[9999] bg-gradient-to-br from-pink-500 via-purple-600 to-indigo-600 flex flex-col items-center justify-center text-center p-6">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6 drop-shadow-lg animate-bounce">
+            🎉 A Special Surprise Awaits! 🎉
+          </h1>
+          <p className="text-white text-lg sm:text-xl md:text-2xl mb-8 max-w-xl">
+            Someone has planned something amazing for you…  
+            Ready to see it? 💜
+          </p>
+          <Button
+            onClick={handleStartSurprise}
+            className="px-8 py-4 text-xl sm:text-2xl bg-pink-600 hover:bg-pink-700 text-white rounded-full shadow-lg animate-pulse"
+          >
+            🎁 Tap to Begin the Surprise 🎁
+          </Button>
+        </div>
       )}
 
-      <div className="fixed bottom-6 right-6 z-50 bg-card/80 backdrop-blur-md rounded-full shadow-lg p-3 flex items-center gap-3">
+      {/* Background Music + Controls */}
+      <div className="fixed bottom-6 right-6 z-50 bg-white/20 backdrop-blur-md rounded-full shadow-lg p-3 flex items-center gap-3">
         <ReactAudioPlayer
           src={audioSrc}
-          autoPlay={false} // autoplay handled manually after first click
+          autoPlay={false} // We start manually after click
           controls={false}
           loop
           volume={isMuted ? 0 : 0.5}
           ref={(el) => {
-            // We need native <audio>, not ReactAudioPlayer's wrapper div
             audioRef.current = el?.audioEl.current || null;
           }}
         />
 
+        {/* Play / Pause Button */}
         <Button
           variant="ghost"
           size="icon"
-          className="h-10 w-10 rounded-full"
+          className="h-10 w-10 rounded-full bg-white/30 hover:bg-white/50"
           onClick={togglePlay}
           aria-label={isPlaying ? "Pause music" : "Play music"}
         >
@@ -68,10 +80,11 @@ export const BackgroundMusic = () => {
           )}
         </Button>
 
+        {/* Mute / Unmute Button */}
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 rounded-full"
+          className="h-8 w-8 rounded-full bg-white/30 hover:bg-white/50"
           onClick={() => setIsMuted(!isMuted)}
           aria-label={isMuted ? "Unmute" : "Mute"}
         >
